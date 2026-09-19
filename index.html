@@ -120,9 +120,14 @@
       color: #475569;
     }
 
-    /* ========== RECEIPT STYLING (MORE REALISTIC) ========== */
+    /* ========== RECEIPT STYLING (PHONE-SIZED) ========== */
     .receipt-panel { display: none; }
     .receipt-panel.show { display: block; }
+
+    .receipt-wrapper {
+      max-width: 380px;          /* phone width */
+      margin: 0 auto;
+    }
 
     .receipt {
       background: white;
@@ -131,12 +136,14 @@
       box-shadow: 0 20px 40px rgba(0,0,0,0.12);
       border: 1px solid #e2e8f0;
       position: relative;
+      width: 100%;
+      max-width: 380px;
     }
 
     .receipt-header {
       background: linear-gradient(135deg, #4f46e5, #7c3aed);
       color: white;
-      padding: 28px 30px 24px;
+      padding: 22px 20px 18px;
       text-align: center;
       position: relative;
     }
@@ -146,21 +153,21 @@
     }
 
     .bank-name {
-      font-size: 1.6rem;
+      font-size: 1.35rem;
       font-weight: 700;
       letter-spacing: 0.3px;
     }
 
     .receipt-title {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       opacity: 0.9;
-      margin-top: 5px;
+      margin-top: 4px;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
     }
 
     .receipt-body {
-      padding: 30px;
+      padding: 22px 18px;
       position: relative;
     }
 
@@ -168,14 +175,14 @@
     .status {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       background: #dcfce7;
       color: #166534;
-      padding: 10px 18px;
+      padding: 8px 14px;
       border-radius: 50px;
       font-weight: 700;
-      font-size: 0.95rem;
-      margin-bottom: 24px;
+      font-size: 0.88rem;
+      margin-bottom: 18px;
       border: 2px solid #86efac;
     }
 
@@ -183,38 +190,38 @@
       content: '✓';
       background: #22c55e;
       color: white;
-      width: 26px;
-      height: 26px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: bold;
     }
 
     /* Amount Box */
     .amount-box {
       text-align: center;
-      margin-bottom: 28px;
-      padding: 22px;
+      margin-bottom: 20px;
+      padding: 16px;
       background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-      border-radius: 16px;
+      border-radius: 14px;
       border: 2px dashed #4ade80;
       position: relative;
     }
 
     .amount-label {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: #166534;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 6px;
+      letter-spacing: 1.2px;
+      margin-bottom: 4px;
       font-weight: 600;
     }
 
     .amount-value {
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: 700;
       color: #15803d;
     }
@@ -222,14 +229,14 @@
     /* Details */
     .details {
       display: grid;
-      gap: 14px;
+      gap: 11px;
     }
 
     .detail-row {
       display: flex;
       justify-content: space-between;
-      gap: 16px;
-      padding-bottom: 12px;
+      gap: 12px;
+      padding-bottom: 10px;
       border-bottom: 1px dashed #e2e8f0;
     }
 
@@ -239,7 +246,7 @@
 
     .detail-label {
       color: #64748b;
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       flex-shrink: 0;
     }
 
@@ -248,24 +255,25 @@
       color: #1e293b;
       text-align: right;
       word-break: break-word;
+      font-size: 0.88rem;
     }
 
     .section-title {
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       text-transform: uppercase;
-      letter-spacing: 1.2px;
+      letter-spacing: 1px;
       color: #4f46e5;
-      margin: 22px 0 12px;
+      margin: 16px 0 10px;
       font-weight: 700;
       border-left: 4px solid #4f46e5;
-      padding-left: 10px;
+      padding-left: 8px;
     }
 
     .receipt-footer {
       background: #f8fafc;
-      padding: 18px 30px;
+      padding: 14px 18px;
       text-align: center;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       color: #94a3b8;
       border-top: 1px solid #e2e8f0;
     }
@@ -273,25 +281,28 @@
     .txn-id {
       font-family: ui-monospace, monospace;
       background: #f1f5f9;
-      padding: 3px 9px;
-      border-radius: 6px;
-      font-size: 0.86rem;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 0.8rem;
     }
 
     .actions {
       display: flex;
-      gap: 12px;
-      margin-top: 18px;
+      gap: 10px;
+      margin-top: 16px;
       padding: 0 5px;
+      max-width: 380px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .actions .btn { margin-top: 0; }
+    .actions .btn { margin-top: 0; font-size: 0.95rem; padding: 12px; }
 
     @media print {
       body { background: white; padding: 0; }
       .form-card, .actions, .top-controls, h1, .subtitle { display: none !important; }
       .container { display: block; }
-      .receipt { box-shadow: none; border: none; }
+      .receipt { box-shadow: none; border: none; max-width: 100%; }
     }
   </style>
 </head>
@@ -393,7 +404,7 @@
           </div>
           <div class="form-group">
             <label id="lblSenderCountryD">Sender Country</label>
-            <input type="text" id="dSenderCountry">
+            <input type="text" id="dSenderCountry" placeholder="e.g. Paraguay">
           </div>
         </div>
 
@@ -445,13 +456,13 @@
         </div>
 
         <div class="form-group">
-          <label id="lblShipTime">Shipment Date & Time</label>
+          <label id="lblShipTime">Shipment Date & Time (from shipping country)</label>
           <input type="datetime-local" id="dTime">
         </div>
 
         <div class="form-group">
-          <label id="lblNotes">Special Instructions</label>
-          <textarea id="dNotes"></textarea>
+          <label id="lblDeliveryDate">Estimated Delivery Date</label>
+          <input type="date" id="dDeliveryDate">
         </div>
       </div>
 
@@ -459,17 +470,22 @@
       <button class="btn btn-secondary" onclick="clearForm()" id="btnClear">Clear Form</button>
     </div>
 
-    <!-- RECEIPT PREVIEW -->
+    <!-- RECEIPT PREVIEW (phone-sized) -->
     <div class="receipt-panel" id="receiptPanel">
-      <div class="card" style="padding:0; overflow:hidden;">
-        <div class="receipt" id="receipt"></div>
-        <div class="actions" style="padding: 20px 28px 28px;">
-          <button class="btn" onclick="window.print()">🖨️ Print / PDF</button>
+      <div class="card" style="padding:20px; overflow:hidden;">
+        <div class="receipt-wrapper">
+          <div class="receipt" id="receipt"></div>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="downloadReceipt()" id="btnDownload">📥 Download to Phone</button>
           <button class="btn btn-secondary" onclick="document.getElementById('receiptPanel').classList.remove('show')">Close</button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- html2canvas for saving receipt as image -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
     const i18n = {
@@ -500,8 +516,8 @@
         lblWeight: "Weight (kg)",
         lblService: "Service Type",
         lblAmountPaid: "Amount Paid",
-        lblShipTime: "Shipment Date & Time",
-        lblNotes: "Special Instructions",
+        lblShipTime: "Shipment Date & Time (from shipping country)",
+        lblDeliveryDate: "Estimated Delivery Date",
         btnGenerate: "Generate Receipt",
         btnClear: "Clear Form",
         paymentTitle: "Payment Receipt",
@@ -521,11 +537,12 @@
         packageInfo: "Package Details",
         service: "Service Type",
         weight: "Weight",
-        notes: "Special Instructions",
         footer: "This is a computer generated receipt • No signature required",
         phone: "Phone",
         country: "Country",
-        description: "Description"
+        description: "Description",
+        deliveryDate: "Estimated Arrival",
+        btnDownload: "📥 Download to Phone"
       },
       es: {
         appTitle: "Generador Inteligente de Recibos",
@@ -554,8 +571,8 @@
         lblWeight: "Peso (kg)",
         lblService: "Tipo de Servicio",
         lblAmountPaid: "Monto Pagado",
-        lblShipTime: "Fecha y Hora de Envío",
-        lblNotes: "Instrucciones Especiales",
+        lblShipTime: "Fecha y Hora de Envío (país de origen)",
+        lblDeliveryDate: "Fecha Estimada de Entrega",
         btnGenerate: "Generar Recibo",
         btnClear: "Limpiar",
         paymentTitle: "Recibo de Pago",
@@ -575,11 +592,12 @@
         packageInfo: "Detalles del Paquete",
         service: "Tipo de Servicio",
         weight: "Peso",
-        notes: "Instrucciones Especiales",
         footer: "Recibo generado por computadora • No requiere firma",
         phone: "Teléfono",
         country: "País",
-        description: "Descripción"
+        description: "Descripción",
+        deliveryDate: "Llegada Estimada",
+        btnDownload: "📥 Descargar al Teléfono"
       },
       hu: {
         appTitle: "Okos Nyugta Generátor",
@@ -608,8 +626,8 @@
         lblWeight: "Súly (kg)",
         lblService: "Szolgáltatás",
         lblAmountPaid: "Fizetett összeg",
-        lblShipTime: "Feladás ideje",
-        lblNotes: "Különleges utasítások",
+        lblShipTime: "Feladás ideje (küldő ország ideje)",
+        lblDeliveryDate: "Becsült érkezési dátum",
         btnGenerate: "Nyugta generálása",
         btnClear: "Törlés",
         paymentTitle: "Fizetési Nyugta",
@@ -629,11 +647,12 @@
         packageInfo: "Csomag részletei",
         service: "Szolgáltatás",
         weight: "Súly",
-        notes: "Utasítások",
         footer: "Számítógéppel generált nyugta • Aláírás nem szükséges",
         phone: "Telefon",
         country: "Ország",
-        description: "Leírás"
+        description: "Leírás",
+        deliveryDate: "Becsült érkezés",
+        btnDownload: "📥 Letöltés telefonra"
       }
     };
 
@@ -647,12 +666,39 @@
       PYG: '₲'
     };
 
+    // Simple country → timezone offset (hours from UTC) for common countries
+    const countryTimezones = {
+      'paraguay': -4, 'py': -4,
+      'hungary': 1, 'hu': 1, 'magyarország': 1,
+      'spain': 1, 'es': 1, 'españa': 1,
+      'united states': -5, 'usa': -5, 'us': -5,
+      'united kingdom': 0, 'uk': 0, 'britain': 0,
+      'germany': 1, 'de': 1,
+      'france': 1, 'fr': 1,
+      'brazil': -3, 'br': -3,
+      'argentina': -3, 'ar': -3,
+      'mexico': -6, 'mx': -6,
+      'canada': -5, 'ca': -5,
+      'australia': 10, 'au': 10,
+      'china': 8, 'cn': 8,
+      'japan': 9, 'jp': 9,
+      'india': 5.5, 'in': 5.5,
+      'nigeria': 1, 'ng': 1,
+      'south africa': 2, 'za': 2
+    };
+
     window.onload = function() {
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
       const iso = now.toISOString().slice(0, 16);
       document.getElementById('time').value = iso;
       document.getElementById('dTime').value = iso;
+
+      // Default delivery date = +3 days
+      const del = new Date();
+      del.setDate(del.getDate() + 3);
+      document.getElementById('dDeliveryDate').value = del.toISOString().slice(0, 10);
+
       setLanguage('en');
     };
 
@@ -662,7 +708,6 @@
       document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
 
       const t = i18n[lang];
-      // Update all labels
       document.getElementById('appTitle').textContent = t.appTitle;
       document.getElementById('appSubtitle').textContent = t.appSubtitle;
       document.getElementById('btnPayment').textContent = t.btnPayment;
@@ -694,7 +739,10 @@
       document.getElementById('lblService').textContent = t.lblService;
       document.getElementById('lblAmountPaid').textContent = t.lblAmountPaid;
       document.getElementById('lblShipTime').textContent = t.lblShipTime;
-      document.getElementById('lblNotes').textContent = t.lblNotes;
+      document.getElementById('lblDeliveryDate').textContent = t.lblDeliveryDate;
+
+      const dlBtn = document.getElementById('btnDownload');
+      if (dlBtn) dlBtn.textContent = t.btnDownload;
     }
 
     function setType(type) {
@@ -711,13 +759,42 @@
       return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    function formatDateTime(iso) {
+    function formatDateTime(iso, countryHint) {
       if (!iso) return '—';
       const dt = new Date(iso);
-      return dt.toLocaleString(currentLang === 'hu' ? 'hu-HU' : currentLang === 'es' ? 'es-ES' : 'en-GB', {
-        day: '2-digit', month: 'short', year: 'numeric',
-        hour: '2-digit', minute: '2-digit', hour12: true
-      });
+
+      // Adjust to approximate timezone of shipping country
+      let offsetHours = 0;
+      if (countryHint) {
+        const key = countryHint.toLowerCase().trim();
+        for (const [name, off] of Object.entries(countryTimezones)) {
+          if (key.includes(name) || name.includes(key)) {
+            offsetHours = off;
+            break;
+          }
+        }
+      }
+
+      // Create a date that represents the local time in that country
+      const utc = dt.getTime() + (dt.getTimezoneOffset() * 60000);
+      const localInCountry = new Date(utc + (3600000 * offsetHours));
+
+      return localInCountry.toLocaleString(
+        currentLang === 'hu' ? 'hu-HU' : currentLang === 'es' ? 'es-ES' : 'en-GB',
+        {
+          day: '2-digit', month: 'short', year: 'numeric',
+          hour: '2-digit', minute: '2-digit', hour12: true
+        }
+      ) + (countryHint ? ` (${countryHint})` : '');
+    }
+
+    function formatDateOnly(iso) {
+      if (!iso) return '—';
+      const dt = new Date(iso + 'T12:00:00');
+      return dt.toLocaleDateString(
+        currentLang === 'hu' ? 'hu-HU' : currentLang === 'es' ? 'es-ES' : 'en-GB',
+        { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' }
+      );
     }
 
     function generateId(prefix) {
@@ -742,7 +819,7 @@
         const receiverCountry = document.getElementById('receiverCountry').value.trim() || '—';
         const receiverAccount = document.getElementById('receiverAccount').value.trim() || '—';
         const amount = formatMoney(document.getElementById('amount').value);
-        const time = formatDateTime(document.getElementById('time').value);
+        const time = formatDateTime(document.getElementById('time').value, senderCountry);
         const note = document.getElementById('note').value.trim();
         const txn = generateId('TXN');
 
@@ -803,7 +880,7 @@
             </div>
 
             ${note ? `
-            <div class="details" style="margin-top:18px;">
+            <div class="details" style="margin-top:14px;">
               <div class="detail-row">
                 <span class="detail-label">${t.reference}</span>
                 <span class="detail-value">${note}</span>
@@ -813,7 +890,7 @@
           <div class="receipt-footer">${t.footer}</div>
         `;
       } else {
-        // Delivery receipt remains the same
+        // Delivery receipt
         const courier = document.getElementById('courier').value.trim() || 'Courier';
         const sName = document.getElementById('dSender').value.trim() || '—';
         const sCountry = document.getElementById('dSenderCountry').value.trim() || '—';
@@ -825,8 +902,8 @@
         const weight = document.getElementById('weight').value.trim() || '—';
         const service = document.getElementById('serviceType').value;
         const amount = formatMoney(document.getElementById('dAmount').value);
-        const time = formatDateTime(document.getElementById('dTime').value);
-        const notes = document.getElementById('dNotes').value.trim();
+        const time = formatDateTime(document.getElementById('dTime').value, sCountry);
+        const deliveryDate = formatDateOnly(document.getElementById('dDeliveryDate').value);
         const tracking = generateId('TRK');
 
         receiptEl.innerHTML = `
@@ -843,6 +920,7 @@
             <div class="details">
               <div class="detail-row"><span class="detail-label">${t.trackingId}</span><span class="detail-value txn-id">${tracking}</span></div>
               <div class="detail-row"><span class="detail-label">${t.dateTime}</span><span class="detail-value">${time}</span></div>
+              <div class="detail-row"><span class="detail-label">${t.deliveryDate}</span><span class="detail-value">${deliveryDate}</span></div>
               <div class="detail-row"><span class="detail-label">${t.service}</span><span class="detail-value">${service}</span></div>
             </div>
             <div class="section-title">${t.senderInfo}</div>
@@ -861,7 +939,6 @@
             <div class="details">
               <div class="detail-row"><span class="detail-label">${t.description}</span><span class="detail-value">${pkg}</span></div>
               <div class="detail-row"><span class="detail-label">${t.weight}</span><span class="detail-value">${weight} kg</span></div>
-              ${notes ? `<div class="detail-row"><span class="detail-label">${t.notes}</span><span class="detail-value">${notes}</span></div>` : ''}
             </div>
           </div>
           <div class="receipt-footer">${t.footer}</div>
@@ -872,10 +949,34 @@
       document.getElementById('receiptPanel').scrollIntoView({ behavior: 'smooth' });
     }
 
+    function downloadReceipt() {
+      const receipt = document.getElementById('receipt');
+      if (!receipt || !receipt.innerHTML.trim()) {
+        alert('Please generate a receipt first');
+        return;
+      }
+
+      // Use html2canvas to turn the phone-sized receipt into an image
+      html2canvas(receipt, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'receipt-' + Date.now() + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        console.error(err);
+        alert('Download failed. Please try again or take a screenshot.');
+      });
+    }
+
     function clearForm() {
       ['sender','senderCountry','senderAccount','receiver','receiverCountry','receiverAccount','amount','note',
        'dSender','dSenderCountry','dSenderPhone','dReceiver','dReceiverCountry','dReceiverPhone',
-       'packageDesc','weight','dAmount','dNotes'].forEach(id => {
+       'packageDesc','weight','dAmount'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
