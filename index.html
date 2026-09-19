@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Receipt Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --success: #10b981;
+      --bg: #f1f5f9;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 25px 15px;
+      color: #1e293b;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 25px;
+    }
+
+    @media (max-width: 980px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 22px;
+    }
+
+    /* Language + Type Switcher */
+    .top-controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .lang-btn, .type-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active, .type-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.88rem;
+      margin-bottom: 6px;
+      color: #475569;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      background: #f8fafc;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    textarea { resize: vertical; min-height: 70px; }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      margin-top: 8px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .btn-secondary:hover {
+      background: #cbd5e1;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* ========== RECEIPT ========== */
+    .receipt-panel { display: none; }
+    .receipt-panel.show { display: block; }
+
+    .receipt {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+    .receipt-header {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 26px 28px;
+      text-align: center;
+      position: relative;
+    }
+
+    .receipt-header.delivery {
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    }
+
+    .bank-name, .courier-name {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .receipt-title {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .receipt-body { padding: 32px 28px 24px; }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #d1fae5;
+      color: #065f46;
+      padding: 7px 14px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      margin-bottom: 22px;
+    }
+
+    .status::before {
+      content: '✓';
+      background: #10b981;
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .amount-box {
+      text-align: center;
+      margin-bottom: 26px;
+      padding: 18px;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      border-radius: 14px;
+      border: 2px dashed #6ee7b7;
+    }
+
+    .amount-label {
+      font-size: 0.8rem;
+      color: #047857;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .amount-value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #065f46;
+    }
+
+    .details { display: grid; gap: 13px; }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding-bottom: 11px;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .detail-row:last-child { border-bottom: none; }
+
+    .detail-label {
+      color: #64748b;
+      font-size: 0.88rem;
+      flex-shrink: 0;
+    }
+
+    .detail-value {
+      font-weight: 600;
+      color: #1e293b;
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #6366f1;
+      margin: 18px 0 10px;
+      font-weight: 700;
+    }
+
+    .receipt-footer {
+      background: #f8fafc;
+      padding: 16px 28px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .txn-id {
+      font-family: ui-monospace, monospace;
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .actions .btn { margin-top: 0; }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .form-card, .actions, .top-controls, h1, .subtitle { display: none !important; }
+      .container { display: block; }
+      .receipt { box-shadow: none; border: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- FORM -->
+    <div class="card form-card">
+      <h1 id="appTitle">Smart Receipt Generator</h1>
+      <p class="subtitle" id="appSubtitle">Create professional Payment or Delivery receipts</p>
+
+      <div class="top-controls">
+        <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">English</button>
+        <button class="lang-btn" data-lang="es" onclick="setLanguage('es')">Español</button>
+        <button class="lang-btn" data-lang="hu" onclick="setLanguage('hu')">Magyar</button>
+      </div>
+
+      <div class="top-controls" style="margin-top: -8px;">
+        <button class="type-btn active" data-type="payment" onclick="setType('payment')" id="btnPayment">Payment Receipt</button>
+        <button class="type-btn" data-type="delivery" onclick="setType('delivery')" id="btnDelivery">Delivery Receipt</button>
+      </div>
+
+      <!-- ========== PAYMENT FORM ========== -->
+      <div id="paymentForm">
+        <div class="form-group">
+          <label id="lblBank">Bank Name</label>
+          <input type="text" id="bank" value="Guarani Bank">
+        </div>
+        <div class="form-group">
+          <label id="lblSender">Sender Name</label>
+          <input type="text" id="sender">
+        </div>
+        <div class="form-group">
+          <label id="lblReceiver">Receiver Name</label>
+          <input type="text" id="receiver">
+        </div>
+        <div class="form-group">
+          <label id="lblAmount">Amount</label>
+          <input type="text" id="amount" placeholder="1500000">
+        </div>
+        <div class="form-group">
+          <label id="lblTime">Transaction Time</label>
+          <input type="datetime-local" id="time">
+        </div>
+        <div class="form-group">
+          <label id="lblNote">Reference / Note (optional)</label>
+          <input type="text" id="note">
+        </div>
+      </div>
+
+      <!-- ========== DELIVERY FORM ========== -->
+      <div id="deliveryForm" style="display:none;">
+        <div class="form-group">
+          <label id="lblCourier">Courier / Company</label>
+          <input type="text" id="courier" value="FastTrack Express">
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label id="lblSenderName">Sender Name</label>
+            <input type="text" id="dSender">
+          </div>
+          <div class="form-group">
+            <label id="lblSenderCountry">Sender Country</label>
+            <input type="text" id="dSenderCountry">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label id="lblSenderPhone">Sender Phone</label>
+          <input type="text" id="dSenderPhone">
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label id="lblReceiverName">Receiver Name</label>
+            <input type="text" id="dReceiver">
+          </div>
+          <div class="form-group">
+            <label id="lblReceiverCountry">Receiver Country</label>
+            <input type="text" id="dReceiverCountry">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label id="lblReceiverPhone">Receiver Phone</label>
+          <input type="text" id="dReceiverPhone">
+        </div>
+
+        <div class="form-group">
+          <label id="lblPackage">Package Description</label>
+          <input type="text" id="packageDesc" placeholder="Documents / Electronics / Clothes...">
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label id="lblWeight">Weight (kg)</label>
+            <input type="text" id="weight" placeholder="2.5">
+          </div>
+          <div class="form-group">
+            <label id="lblService">Service Type</label>
+            <select id="serviceType">
+              <option value="Standard">Standard</option>
+              <option value="Express">Express</option>
+              <option value="Overnight">Overnight</option>
+              <option value="Economy">Economy</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label id="lblAmountPaid">Amount Paid</label>
+          <input type="text" id="dAmount" placeholder="85000">
+        </div>
+
+        <div class="form-group">
+          <label id="lblShipTime">Shipment Date & Time</label>
+          <input type="datetime-local" id="dTime">
+        </div>
+
+        <div class="form-group">
+          <label id="lblNotes">Special Instructions (optional)</label>
+          <textarea id="dNotes"></textarea>
+        </div>
+      </div>
+
+      <button class="btn" onclick="generateReceipt()" id="btnGenerate">Generate Receipt</button>
+      <button class="btn btn-secondary" onclick="clearForm()" id="btnClear">Clear Form</button>
+    </div>
+
+    <!-- RECEIPT PREVIEW -->
+    <div class="receipt-panel" id="receiptPanel">
+      <div class="card" style="padding:0; overflow:hidden;">
+        <div class="receipt" id="receipt">
+          <!-- Content injected by JS -->
+        </div>
+
+        <div class="actions" style="padding: 20px 28px 28px;">
+          <button class="btn" onclick="window.print()">🖨️ Print / PDF</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('receiptPanel').classList.remove('show')">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===================== TRANSLATIONS =====================
+    const i18n = {
+      en: {
+        appTitle: "Smart Receipt Generator",
+        appSubtitle: "Create professional Payment or Delivery receipts",
+        btnPayment: "Payment Receipt",
+        btnDelivery: "Delivery Receipt",
+        lblBank: "Bank Name",
+        lblSender: "Sender Name",
+        lblReceiver: "Receiver Name",
+        lblAmount: "Amount",
+        lblTime: "Transaction Time",
+        lblNote: "Reference / Note (optional)",
+        lblCourier: "Courier / Company",
+        lblSenderName: "Sender Name",
+        lblSenderCountry: "Sender Country",
+        lblSenderPhone: "Sender Phone",
+        lblReceiverName: "Receiver Name",
+        lblReceiverCountry: "Receiver Country",
+        lblReceiverPhone: "Receiver Phone",
+        lblPackage: "Package Description",
+        lblWeight: "Weight (kg)",
+        lblService: "Service Type",
+        lblAmountPaid: "Amount Paid",
+        lblShipTime: "Shipment Date & Time",
+        lblNotes: "Special Instructions (optional)",
+        btnGenerate: "Generate Receipt",
+        btnClear: "Clear Form",
+        paymentTitle: "Payment Receipt",
+        deliveryTitle: "Delivery Receipt",
+        statusPaid: "Payment Successful",
+        statusShipped: "Shipment Confirmed",
+        amountPaid: "Amount Paid",
+        txnId: "Transaction ID",
+        trackingId: "Tracking Number",
+        dateTime: "Date & Time",
+        from: "From (Sender)",
+        to: "To (Receiver)",
+        reference: "Reference",
+        senderInfo: "Sender Information",
+        receiverInfo: "Receiver Information",
+        packageInfo: "Package Details",
+        service: "Service Type",
+        weight: "Weight",
+        notes: "Special Instructions",
+        footer: "This is a computer generated receipt • No signature required",
+        phone: "Phone"
+      },
+      es: {
+        appTitle: "Generador Inteligente de Recibos",
+        appSubtitle: "Crea recibos profesionales de Pago o Entrega",
+        btnPayment: "Recibo de Pago",
+        btnDelivery: "Recibo de Entrega",
+        lblBank: "Nombre del Banco",
+        lblSender: "Nombre del Remitente",
+        lblReceiver: "Nombre del Destinatario",
+        lblAmount: "Monto",
+        lblTime: "Fecha y Hora de Transacción",
+        lblNote: "Referencia / Nota (opcional)",
+        lblCourier: "Empresa de Envío",
+        lblSenderName: "Nombre del Remitente",
+        lblSenderCountry: "País del Remitente",
+        lblSenderPhone: "Teléfono del Remitente",
+        lblReceiverName: "Nombre del Destinatario",
+        lblReceiverCountry: "País del Destinatario",
+        lblReceiverPhone: "Teléfono del Destinatario",
+        lblPackage: "Descripción del Paquete",
+        lblWeight: "Peso (kg)",
+        lblService: "Tipo de Servicio",
+        lblAmountPaid: "Monto Pagado",
+        lblShipTime: "Fecha y Hora de Envío",
+        lblNotes: "Instrucciones Especiales (opcional)",
+        btnGenerate: "Generar Recibo",
+        btnClear: "Limpiar Formulario",
+        paymentTitle: "Recibo de Pago",
+        deliveryTitle: "Recibo de Entrega",
+        statusPaid: "Pago Exitoso",
+        statusShipped: "Envío Confirmado",
+        amountPaid: "Monto Pagado",
+        txnId: "ID de Transacción",
+        trackingId: "Número de Seguimiento",
+        dateTime: "Fecha y Hora",
+        from: "De (Remitente)",
+        to: "Para (Destinatario)",
+        reference: "Referencia",
+        senderInfo: "Información del Remitente",
+        receiverInfo: "Información del Destinatario",
+        packageInfo: "Detalles del Paquete",
+        service: "Tipo de Servicio",
+        weight: "Peso",
+        notes: "Instrucciones Especiales",
+        footer: "Este es un recibo generado por computadora • No requiere firma",
+        phone: "Teléfono"
+      },
+      hu: {
+        appTitle: "Okos Nyugta Generátor",
+        appSubtitle: "Készíts professzionális Fizetési vagy Szállítási nyugtát",
+        btnPayment: "Fizetési Nyugta",
+        btnDelivery: "Szállítási Nyugta",
+        lblBank: "Bank neve",
+        lblSender: "Küldő neve",
+        lblReceiver: "Címzett neve",
+        lblAmount: "Összeg",
+        lblTime: "Tranzakció időpontja",
+        lblNote: "Megjegyzés (opcionális)",
+        lblCourier: "Futárszolgálat / Cég",
+        lblSenderName: "Küldő neve",
+        lblSenderCountry: "Küldő országa",
+        lblSenderPhone: "Küldő telefonszáma",
+        lblReceiverName: "Címzett neve",
+        lblReceiverCountry: "Címzett országa",
+        lblReceiverPhone: "Címzett telefonszáma",
+        lblPackage: "Csomag leírása",
+        lblWeight: "Súly (kg)",
+        lblService: "Szolgáltatás típusa",
+        lblAmountPaid: "Fizetett összeg",
+        lblShipTime: "Feladás dátuma és ideje",
+        lblNotes: "Különleges utasítások (opcionális)",
+        btnGenerate: "Nyugta generálása",
+        btnClear: "Űrlap törlése",
+        paymentTitle: "Fizetési Nyugta",
+        deliveryTitle: "Szállítási Nyugta",
+        statusPaid: "Sikeres fizetés",
+        statusShipped: "Szállítás megerősítve",
+        amountPaid: "Fizetett összeg",
+        txnId: "Tranzakció azonosító",
+        trackingId: "Nyomkövetési szám",
+        dateTime: "Dátum és idő",
+        from: "Feladó",
+        to: "Címzett",
+        reference: "Megjegyzés",
+        senderInfo: "Feladó adatai",
+        receiverInfo: "Címzett adatai",
+        packageInfo: "Csomag részletei",
+        service: "Szolgáltatás",
+        weight: "Súly",
+        notes: "Különleges utasítások",
+        footer: "Ez egy számítógéppel generált nyugta • Aláírás nem szükséges",
+        phone: "Telefon"
+      }
+    };
+
+    let currentLang = 'en';
+    let currentType = 'payment';
+
+    // ===================== INIT =====================
+    window.onload = function() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      const iso = now.toISOString().slice(0, 16);
+      document.getElementById('time').value = iso;
+      document.getElementById('dTime').value = iso;
+      setLanguage('en');
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+
+      const t = i18n[lang];
+      document.getElementById('appTitle').textContent = t.appTitle;
+      document.getElementById('appSubtitle').textContent = t.appSubtitle;
+      document.getElementById('btnPayment').textContent = t.btnPayment;
+      document.getElementById('btnDelivery').textContent = t.btnDelivery;
+      document.getElementById('btnGenerate').textContent = t.btnGenerate;
+      document.getElementById('btnClear').textContent = t.btnClear;
+
+      // Payment labels
+      document.getElementById('lblBank').textContent = t.lblBank;
+      document.getElementById('lblSender').textContent = t.lblSender;
+      document.getElementById('lblReceiver').textContent = t.lblReceiver;
+      document.getElementById('lblAmount').textContent = t.lblAmount;
+      document.getElementById('lblTime').textContent = t.lblTime;
+      document.getElementById('lblNote').textContent = t.lblNote;
+
+      // Delivery labels
+      document.getElementById('lblCourier').textContent = t.lblCourier;
+      document.getElementById('lblSenderName').textContent = t.lblSenderName;
+      document.getElementById('lblSenderCountry').textContent = t.lblSenderCountry;
+      document.getElementById('lblSenderPhone').textContent = t.lblSenderPhone;
+      document.getElementById('lblReceiverName').textContent = t.lblReceiverName;
+      document.getElementById('lblReceiverCountry').textContent = t.lblReceiverCountry;
+      document.getElementById('lblReceiverPhone').textContent = t.lblReceiverPhone;
+      document.getElementById('lblPackage').textContent = t.lblPackage;
+      document.getElementById('lblWeight').textContent = t.lblWeight;
+      document.getElementById('lblService').textContent = t.lblService;
+      document.getElementById('lblAmountPaid').textContent = t.lblAmountPaid;
+      document.getElementById('lblShipTime').textContent = t.lblShipTime;
+      document.getElementById('lblNotes').textContent = t.lblNotes;
+    }
+
+    function setType(type) {
+      currentType = type;
+      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-type="${type}"]`).classList.add('active');
+
+      document.getElementById('paymentForm').style.display = type === 'payment' ? 'block' : 'none';
+      document.getElementById('deliveryForm').style.display = type === 'delivery' ? 'block' : 'none';
+      document.getElementById('receiptPanel').classList.remove('show');
+    }
+
+    function formatMoney(val) {
+      const num = Number(String(val).replace(/[^\d.]/g, '')) || 0;
+      return num.toLocaleString('en-US');
+    }
+
+    function formatDateTime(iso) {
+      if (!iso) return '—';
+      const dt = new Date(iso);
+      return dt.toLocaleString(currentLang === 'hu' ? 'hu-HU' : currentLang === 'es' ? 'es-ES' : 'en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: true
+      });
+    }
+
+    function generateId(prefix) {
+      return prefix + '-' + Math.floor(10000000 + Math.random() * 90000000);
+    }
+
+    function generateReceipt() {
+      const t = i18n[currentLang];
+      const receiptEl = document.getElementById('receipt');
+
+      if (currentType === 'payment') {
+        const bank = document.getElementById('bank').value.trim() || 'Bank';
+        const sender = document.getElementById('sender').value.trim() || '—';
+        const receiver = document.getElementById('receiver').value.trim() || '—';
+        const amount = formatMoney(document.getElementById('amount').value);
+        const time = formatDateTime(document.getElementById('time').value);
+        const note = document.getElementById('note').value.trim();
+        const txn = generateId('TXN');
+
+        receiptEl.innerHTML = `
+          <div class="receipt-header">
+            <div class="bank-name">${bank}</div>
+            <div class="receipt-title">${t.paymentTitle}</div>
+          </div>
+          <div class="receipt-body">
+            <div class="status">${t.statusPaid}</div>
+            <div class="amount-box">
+              <div class="amount-label">${t.amountPaid}</div>
+              <div class="amount-value">₲ ${amount}</div>
+            </div>
+            <div class="details">
+              <div class="detail-row">
+                <span class="detail-label">${t.txnId}</span>
+                <span class="detail-value txn-id">${txn}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">${t.dateTime}</span>
+                <span class="detail-value">${time}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">${t.from}</span>
+                <span class="detail-value">${sender}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">${t.to}</span>
+                <span class="detail-value">${receiver}</span>
+              </div>
+              ${note ? `
+              <div class="detail-row">
+                <span class="detail-label">${t.reference}</span>
+                <span class="detail-value">${note}</span>
+              </div>` : ''}
+            </div>
+          </div>
+          <div class="receipt-footer">${t.footer}</div>
+        `;
+      } else {
+        // DELIVERY RECEIPT
+        const courier = document.getElementById('courier').value.trim() || 'Courier';
+        const sName = document.getElementById('dSender').value.trim() || '—';
+        const sCountry = document.getElementById('dSenderCountry').value.trim() || '—';
+        const sPhone = document.getElementById('dSenderPhone').value.trim() || '—';
+        const rName = document.getElementById('dReceiver').value.trim() || '—';
+        const rCountry = document.getElementById('dReceiverCountry').value.trim() || '—';
+        const rPhone = document.getElementById('dReceiverPhone').value.trim() || '—';
+        const pkg = document.getElementById('packageDesc').value.trim() || '—';
+        const weight = document.getElementById('weight').value.trim() || '—';
+        const service = document.getElementById('serviceType').value;
+        const amount = formatMoney(document.getElementById('dAmount').value);
+        const time = formatDateTime(document.getElementById('dTime').value);
+        const notes = document.getElementById('dNotes').value.trim();
+        const tracking = generateId('TRK');
+
+        receiptEl.innerHTML = `
+          <div class="receipt-header delivery">
+            <div class="courier-name">${courier}</div>
+            <div class="receipt-title">${t.deliveryTitle}</div>
+          </div>
+          <div class="receipt-body">
+            <div class="status">${t.statusShipped}</div>
+            <div class="amount-box">
+              <div class="amount-label">${t.amountPaid}</div>
+              <div class="amount-value">₲ ${amount}</div>
+            </div>
+            <div class="details">
+              <div class="detail-row">
+                <span class="detail-label">${t.trackingId}</span>
+                <span class="detail-value txn-id">${tracking}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">${t.dateTime}</span>
+                <span class="detail-value">${time}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">${t.service}</span>
+                <span class="detail-value">${service}</span>
+              </div>
+            </div>
+
+            <div class="section-title">${t.senderInfo}</div>
+            <div class="details">
+              <div class="detail-row">
+                <span class="detail-label">${t.from}</span>
+                <span class="detail-value">${sName}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Country</span>
+                <span class="detail-value">${sCountry}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">${t.phone}</span>
+                <span class="detail-value">${sPhone}</span>
+              </div>
+            </div>
+
+            <div class="section-title">${t.receiverInfo}</div>
+            <div class="details">
+              <div class="detail-row">
+                <span class="detail-label">${t.to}</span>
+                <span class="detail-value">${rName}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Country</span>
+                <span class="detail-value">${rCountry}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">${t.phone}</span>
+                <span class="detail-value">${rPhone}</span>
+              </div>
+            </div>
+
+            <div class="section-title">${t.packageInfo}</div>
+            <div class="details">
+              <div class="detail-row">
+                <span class="detail-label">Description</span>
+                <span class="detail-value">${pkg}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">${t.weight}</span>
+                <span class="detail-value">${weight} kg</span>
+              </div>
+              ${notes ? `
+              <div class="detail-row">
+                <span class="detail-label">${t.notes}</span>
+                <span class="detail-value">${notes}</span>
+              </div>` : ''}
+            </div>
+          </div>
+          <div class="receipt-footer">${t.footer}</div>
+        `;
+      }
+
+      document.getElementById('receiptPanel').classList.add('show');
+      document.getElementById('receiptPanel').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function clearForm() {
+      // Payment
+      document.getElementById('sender').value = '';
+      document.getElementById('receiver').value = '';
+      document.getElementById('amount').value = '';
+      document.getElementById('note').value = '';
+
+      // Delivery
+      document.getElementById('dSender').value = '';
+      document.getElementById('dSenderCountry').value = '';
+      document.getElementById('dSenderPhone').value = '';
+      document.getElementById('dReceiver').value = '';
+      document.getElementById('dReceiverCountry').value = '';
+      document.getElementById('dReceiverPhone').value = '';
+      document.getElementById('packageDesc').value = '';
+      document.getElementById('weight').value = '';
+      document.getElementById('dAmount').value = '';
+      document.getElementById('dNotes').value = '';
+
+      document.getElementById('receiptPanel').classList.remove('show');
+    }
+  </script>
+</body>
+</html>
